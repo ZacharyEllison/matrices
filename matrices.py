@@ -12,6 +12,8 @@ How do you want to have the matrix input?
 [[a,b,c],[d,e,f],[g,h,i]]
 This way I know the row and column rather easily
 """
+
+
 # Function to convert input string to lists of numbers
 def myAtoI( string ):
     string = string.replace('(','')
@@ -29,10 +31,37 @@ def matrix_input( ):
 
 # Row Reduces the input matrix
 def rref():
+#    if rref_found != True:
     global rref_matrix
     rref_matrix = matrix
-
+    row = 0
+    for leading_one in range(len(rref_matrix)):
+        lead = False
+        while lead == False:
+            if rref_matrix[row][leading_one] == 0: # can't be LO
+                row += 1
+            else:
+                # Make this leading one the right row
+                rref_matrix[row], rref_matrix[leading_one] = rref_matrix[leading_one], rref_matrix[row]
+                # Divide the row to make leading one a one
+                for column in range(len(matrix[leading_one])):
+                    rref_matrix[leading_one][column] = rref_matrix[leading_one][column] / rref_matrix[leading_one][leading_one]
+                    # While at it, subtract from all rows 
+                    for new_row in range(len(rref_matrix)):
+                        if new_row == leading_one:
+                            pass
+                        else:
+                            if rref_matrix[new_row][column] != 0:
+                                rref_matrix[new_row][column] -= rref_matrix[leading_one][column]
+                            else:
+                                pass
+                lead = True
+    print(rref_matrix)
+    rref_found = True
     return 0
+    # else:
+    #     print(rref_matrix)
+    #     return 0
 
 # Finds Image and Kernel of input matrix
 def im_and_ker():
@@ -74,8 +103,7 @@ def post_input():
         5. Find the Inverse (if invertible)
         6. Find the Eigenvalues
         7. Find the Eigenvectors
-        8. Exit
-        """)
+        8. Exit""")
         ans = input(": ")
         if ans == "8":
             print("\nGoodbye.\n")
