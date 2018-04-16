@@ -31,37 +31,32 @@ def matrix_input( ):
 
 # Row Reduces the input matrix
 def rref():
-#    if rref_found != True:
     global rref_matrix
-    rref_matrix = matrix
-    row = 0
-    for leading_one in range(len(rref_matrix)):
-        lead = False
-        while lead == False:
-            if rref_matrix[row][leading_one] == 0: # can't be LO
-                row += 1
-            else:
-                # Make this leading one the right row
-                rref_matrix[row], rref_matrix[leading_one] = rref_matrix[leading_one], rref_matrix[row]
-                # Divide the row to make leading one a one
-                for column in range(len(matrix[leading_one])):
-                    rref_matrix[leading_one][column] = rref_matrix[leading_one][column] / rref_matrix[leading_one][leading_one]
-                    # While at it, subtract from all rows 
-                    for new_row in range(len(rref_matrix)):
-                        if new_row == leading_one:
-                            pass
-                        else:
-                            if rref_matrix[new_row][column] != 0:
-                                rref_matrix[new_row][column] -= rref_matrix[leading_one][column]
-                            else:
-                                pass
-                lead = True
-    print(rref_matrix)
-    rref_found = True
+    rref_matrix = [[c for c in matrix[i]] for i in range(len(matrix))]
+    leading_one = 0
+    rowCount = len(rref_matrix)
+    columnCount = len(rref_matrix[0])
+    for row in range(rowCount):
+        if columnCount <= leading_one:
+            break
+        r = row
+        while rref_matrix[r][leading_one] == 0:
+            r += 1
+            if rowCount == r:
+                r = row
+                leading_one += 1
+                if columnCount == leading_one:
+                    print(rref_matrix)
+                    return 0
+        rref_matrix[r], rref_matrix[row] = rref_matrix[row], rref_matrix[r]
+        if rref_matrix[row][leading_one] != 0:
+            rref_matrix[row][:] = [x / rref_matrix[row][leading_one] for x in rref_matrix[row]]
+        for new_row in range(len(rref_matrix)):
+            if new_row != row:
+                rref_matrix[new_row][:] = [x - (rref_matrix[new_row][leading_one] * rref_matrix[row][rref_matrix[new_row].index(x)]) for x in rref_matrix[new_row]] 
+        leading_one += 1
+        print(rref_matrix)
     return 0
-    # else:
-    #     print(rref_matrix)
-    #     return 0
 
 # Finds Image and Kernel of input matrix
 def im_and_ker():
@@ -94,8 +89,7 @@ def testers( ):
 # Main menu function
 def post_input():
     while True:
-        print("""
-        What would you like us to do with your matrix?
+        print("""What would you like us to do with your matrix?
         1. Find Row Reduced Echelon Form
         2. Find the Image and Kernel
         3. Find the Transpose
@@ -103,9 +97,10 @@ def post_input():
         5. Find the Inverse (if invertible)
         6. Find the Eigenvalues
         7. Find the Eigenvectors
-        8. Exit""")
+        8. Enter a New Matrix
+        9. Exit""")
         ans = input(": ")
-        if ans == "8":
+        if ans == "9":
             print("\nGoodbye.\n")
             exit()
         elif ans == "1":
@@ -128,6 +123,9 @@ def post_input():
             post_input()
         elif ans == "7":
             eigenvectors()
+            post_input()
+        elif ans == "8":
+            matrix_input()
             post_input()
         else:
             print("Not a valid input.")
