@@ -49,14 +49,17 @@ def rref(matrix_given):
                 rref_matrix[new_row][:] = [x - (rref_matrix[new_row][leading_one] * rref_matrix[row][rref_matrix[new_row].index(x)]) for x in rref_matrix[new_row]] 
         leading_one += 1
         print(rref_matrix)
+    return rref_matrix
 
 # Finds Image and Kernel of input matrix
 def im_and_ker():
-    # Image can be defined as the rows of the rref of the transpose
+    image_span = []
     rref_transposed = list(zip(*rref(matrix)))
-    image_span = [[c for c in row] for row in rref_transposed if row.count(0) == len(row) - 1]
+    for index, row in enumerate(rref_transposed):
+        if row.count(0) == (len(row) - 1):
+            image_span.append(list(zip(*matrix))[index])
     print("Image spans the columns: ", image_span)
-
+    
     ker = []
 
     return 0
