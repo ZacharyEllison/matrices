@@ -4,15 +4,9 @@ This program assumes a square matrix as input of form (a,b,c);(d,e,f);(g,h,i)
 After input, the user is asked what operations should be done to it.
 Operations that are within the scope of this program to return are:
 Row reduction, transposition, inversion, determinant, eigenvalues, eigenvectors(?).
-"""
 
+Make your Declarations!
 """
-How do you want to have the matrix input?
-
-[[a,b,c],[d,e,f],[g,h,i]]
-This way I know the row and column rather easily
-"""
-
 
 # Function to convert input string to lists of numbers
 def myAtoI( string ):
@@ -30,9 +24,9 @@ def matrix_input( ):
     return 0
 
 # Row Reduces the input matrix
-def rref():
-    global rref_matrix
-    rref_matrix = [[c for c in matrix[i]] for i in range(len(matrix))]
+def rref(matrix_given):
+    rref_matrix = [[c for c in matrix_given[i]] for i in range(len(matrix_given))]
+    print(rref_matrix)
     leading_one = 0
     rowCount = len(rref_matrix)
     columnCount = len(rref_matrix[0])
@@ -46,8 +40,7 @@ def rref():
                 r = row
                 leading_one += 1
                 if columnCount == leading_one:
-                    print(rref_matrix)
-                    return 0
+                    return rref_matrix
         rref_matrix[r], rref_matrix[row] = rref_matrix[row], rref_matrix[r]
         if rref_matrix[row][leading_one] != 0:
             rref_matrix[row][:] = [x / rref_matrix[row][leading_one] for x in rref_matrix[row]]
@@ -56,12 +49,18 @@ def rref():
                 rref_matrix[new_row][:] = [x - (rref_matrix[new_row][leading_one] * rref_matrix[row][rref_matrix[new_row].index(x)]) for x in rref_matrix[new_row]] 
         leading_one += 1
         print(rref_matrix)
-    return 0
 
 # Finds Image and Kernel of input matrix
 def im_and_ker():
-    return 0
+    # Image can be defined as the rows of the rref of the transpose
+    rref_transposed = list(zip(*rref(matrix)))
+    image_span = [[c for c in row] for row in rref_transposed if row.count(0) == len(row) - 1]
+    print("Image spans the columns: ", image_span)
 
+    ker = []
+
+    return 0
+    
 # Returns transpose of matrix
 def transpose( ):
     print(list(zip(*matrix)))
@@ -104,7 +103,7 @@ def post_input():
             print("\nGoodbye.\n")
             exit()
         elif ans == "1":
-            rref()
+            print("RREF is: ", rref(matrix))
             post_input()
         elif ans == "2":
             im_and_ker()
