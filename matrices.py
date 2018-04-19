@@ -54,13 +54,22 @@ def rref(matrix_given):
 # Finds Image and Kernel of input matrix
 def im_and_ker():
     image_span = []
+    # Make columns of RREF rows to access easier
     rref_transposed = list(zip(*rref(matrix)))
+    # Find the columns of RREF that have leading ones
     for index, row in enumerate(rref_transposed):
-        if row.count(0) == (len(row) - 1):
+        # Note leading one should be indexed same as row
+        if row.count(0) == (len(row) - 1) and row.index(1) == index:
+            # Image spans the pivot columns of original matrix
             image_span.append(list(zip(*matrix))[index])
-    print("Image spans the columns: ", image_span)
+        else:
+            # Kernel spans the columns of rref without leading ones
+            kernel_span = [-c for c in row]
+            kernel_span[index] += 1
+
     
-    ker = []
+    print("Image spans the columns: ", image_span)
+    print("Kernel basis spans the columns: ", kernel_span)
 
     return 0
     
