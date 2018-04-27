@@ -7,6 +7,7 @@ Row reduction, transposition, inversion, determinant, eigenvalues, eigenvectors(
 
 Make your Declarations!
 """
+import math
 
 # Function to convert input string to lists of numbers
 def myAtoI( string ):
@@ -67,7 +68,6 @@ def im_and_ker():
             kernel_span = [-c for c in row]
             kernel_span[index] += 1
 
-    
     print("Image spans the columns: ", image_span)
     print("Kernel basis spans the columns: ", kernel_span)
 
@@ -78,9 +78,60 @@ def transpose( ):
     print(list(zip(*matrix)))
     return 0
 
+# Returns next matrix of laplace expansion
+def laplace(given_matrix, given_column, given_row):
+    return [[given_matrix[row][c] for c in range(len(given_matrix[row])) if c != given_column] for row in range(len(given_matrix)) if row != given_row]
+    
+
 # Finds determinant of input matrix
-def determinant():
-    return 0
+def determinant(given_matrix):
+    # Laplace Expansion and Recursion are better
+    # base case, 2x2
+    if len(given_matrix) == 2:
+        return ((given_matrix[0][0]*given_matrix[1][1]) - (given_matrix[0][1]*given_matrix[1][0]))
+    else:
+        # Check for row / column with most 0s
+        
+        # Check for square matrix in case
+        if len(given_matrix) == len(given_matrix[0]):
+            # Check rows
+            start_column = 0
+            start_row = 0
+            column_zeroes = 0
+            row_zeroes = 0
+            for row in given_matrix:
+                # Check for row of mostly 0s
+                if row.count(0) > row_zeroes:
+                    row_zeroes = row.count(0)
+                    start_row = given_matrix.index(row)
+            # Transpose and check columns
+            transposed = list(zip(*given_matrix))
+            for column in transposed:    
+                if column.count(0) > column_zeroes:
+                    column_zeroes = column.count(0)
+                    start_column = transposed.index(column)
+            start = True if row_zeroes > column_zeroes else False
+
+            # Make a matrix that will tell us the sign
+            sign_matrix = [[math.pow(-1, (c + given_matrix.index(row))) for c in range(len(row))] for row in given_matrix]
+            # Now recursively find determinant
+            d = 0
+            if start:
+                for c in given_matrix[start_row]:
+                    if c != 0:
+                        d += (sign_matrix[start_row][given_matrix[start_row].index(c)] * c) * determinant(laplace(given_matrix, given_matrix[start_row].index(c), start_row))
+                return d
+            else:
+                for c in transposed[start_column]:
+                    if c != 0:
+                        d += (list(zip(*sign_matrix))[start_column][transposed[start_column].index(c)] * c) * determinant(laplace(transposed, transposed[start_column].index(c), start_column))
+                return d
+
+
+        # Not Square
+        else:
+            print("Not possible for rectangle matrix.")
+            return 0
 
 # Finds the inverse matrix
 def inverse():
@@ -124,7 +175,7 @@ def post_input():
             transpose()
             post_input()
         elif ans == "4":
-            determinant()
+            print("Determinant is: ", determinant(matrix))
             post_input()
         elif ans == "5":
             inverse()
